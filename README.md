@@ -1,1 +1,1 @@
-# RShell
+Simple Reverse shell, nothing special
