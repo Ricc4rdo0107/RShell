@@ -140,7 +140,7 @@ class Server:
                         stdout=sp.PIPE,
                         stderr=sp.PIPE)
             
-            if error in compile_process:
+            if error in compile_process.stdout.decode("utf-8"):
                 console.print("Fixing compatibility problem...", style="bold purple")
 
             
